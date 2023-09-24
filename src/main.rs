@@ -20,7 +20,7 @@ fn main() {
     .for_each(|adapter| {
         let attr = adapter.get_info();
         println!(
-            "{:>32}, {:?}, {:?}",
+            "{:>64}, {:?}, {:?}",
             attr.name, attr.backend, attr.device_type
         );
     });
