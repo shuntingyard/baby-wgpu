@@ -1,2 +1,2 @@
 #!/bin/bash
-RUST_LOG=trace,wgpu_core=info cargo run
+RUST_LOG=trace,wgpu_core=info,wgpu_hal=warn cargo run
