@@ -18,11 +18,20 @@ struct State {
     // Window is to be declared after surface so it gets dropped after it
     // as the surface contains unsafe refs to windows resources!
     window: Window,
+
+    clear_color: wgpu::Color,
 }
 
 impl State {
     // Creation of some wgpu types is async.
     async fn new(window: Window) -> Self {
+        let clear_color = wgpu::Color {
+            r: 0.1,
+            g: 0.2,
+            b: 0.3,
+            a: 1.0,
+        };
+
         let size = window.inner_size();
 
         // Handle to GPU where
@@ -109,6 +118,7 @@ impl State {
             queue,
             config,
             size,
+            clear_color,
         }
     }
 
@@ -126,8 +136,24 @@ impl State {
         }
     }
 
-    fn _input(&mut self, _event: &WindowEvent) -> bool {
-        false // for now
+    fn input(&mut self, event: &WindowEvent) -> bool {
+        #[allow(deprecated)]
+        if let WindowEvent::CursorMoved {
+            device_id: _,
+            position,
+            modifiers: _,
+        } = event
+        {
+            let r = position.x / self.size.width as f64;
+            let g = position.y / self.size.height as f64;
+            self.clear_color = wgpu::Color {
+                r,
+                g,
+                b: 0.3,
+                a: 1.0,
+            };
+        }
+        false
     }
 
     fn update(&mut self) {}
@@ -149,12 +175,7 @@ impl State {
                 view: &view,
                 resolve_target: None,
                 ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(wgpu::Color {
-                        r: 0.1,
-                        g: 0.2,
-                        b: 0.3,
-                        a: 1.0,
-                    }),
+                    load: wgpu::LoadOp::Clear(self.clear_color),
                     store: true,
                 },
             })],
@@ -229,6 +250,15 @@ pub async fn run() {
                 scale_factor: _,
                 new_inner_size,
             } => state.resize(*new_inner_size),
+
+            #[allow(deprecated)]
+            WindowEvent::CursorMoved {
+                device_id: _,
+                position: _,
+                modifiers: _,
+            } => {
+                state.input(&event);
+            }
             _ => {}
         },
         Event::RedrawRequested(window_id) if window_id == state.window().id() => {
