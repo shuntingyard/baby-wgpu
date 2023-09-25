@@ -8,6 +8,7 @@ use winit::{
 
 mod apparat;
 mod icon;
+mod pipelines;
 use apparat::State;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]

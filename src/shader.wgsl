@@ -1,6 +1,6 @@
 // Vertex shader
 struct VertexOutput {
-	@builtin(position) clip_position: vec4<f32>, // think homogene Koordinaten, projektive Geometrie
+    @builtin(position) clip_position: vec4<f32>, // think homogene Koordinaten, projektive Geometrie
 };
 
 @vertex // Marks the entry point.
